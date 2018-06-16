@@ -9,8 +9,5 @@
     "@babel/core": "^7.0.0-beta.51",
     "nuxt": "^1.4.0"
   },
-  "devDependencies": {
-    "@vue/babel-preset-app": "^3.0.0-rc.2",
-    "vue-cli-plugin-nuxt-starter-template": "^0.0.6"
-  }
+  "devDependencies": {}
 }
