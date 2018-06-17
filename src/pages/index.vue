@@ -1,33 +1,69 @@
 <template>
   <section class="container">
+    <a href="/api/auth/twitter">Twitter認証</a>
+    <a href="/api/follow/followers">フォロワー確認</a>
+    {{tokens}}
     <div>
-      <app-logo/>
-      <h1 class="title">
-        Welcome to your Nuxt.js experience! {{tokens}}
-      </h1>
-      <a href="/api/auth/twitter">Twitter認証</a>
-      <a href="/api/follow/followers">フォロワー確認</a>
-      <h2 class="subtitle">
-        This is an example page
-      </h2>
-      <div class="links">
-        <a href="https://nuxtjs.org/" target="_blank" class="button--green">Documentation</a>
-        <a href="https://github.com/nuxt/nuxt.js" target="_blank" class="button--grey">GitHub</a>
+      <div v-for="(follower, key) in followers">
+        <a :href="`https://twitter.com/${follower.screen_name}`">{{follower.name}} ({{follower.followers_count}})</a>
       </div>
     </div>
+    <no-ssr>
+      <infinite-loading @infinite="loadFollower" v-if="tokens.access_token"></infinite-loading>
+    </no-ssr>
   </section>
 </template>
 
 <script>
-import AppLogo from "~/components/AppLogo.vue";
 import { mapGetters } from "vuex";
+import InfiniteLoading from "vue-infinite-loading";
 
 export default {
-  components: {
-    AppLogo
-  },
+  components: { InfiniteLoading },
   computed: {
     ...mapGetters(["tokens"])
+  },
+  async created() {
+    try {
+      let i = 0;
+      while (i < 2) {
+        await this.loadFollower();
+        i++;
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  },
+  methods: {
+    async loadFollower($state) {
+      try {
+        const screen_name = "kotamats",
+          cursor = this.followerCursor;
+        const res = await this.$axios.$get("/api/follow/followers", {
+          params: {
+            screen_name,
+            cursor
+          }
+        });
+        this.followers = [...this.followers, ...res.users];
+        this.followerCursor = res.next_cursor;
+        if (!res.next_cursor) {
+          throw new Error("load ended");
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        if ($state) {
+          $state.loaded();
+        }
+      }
+    }
+  },
+  data() {
+    return {
+      followers: [],
+      followerCursor: null
+    };
   }
 };
 </script>
@@ -39,27 +75,5 @@ export default {
   justify-content: center;
   align-items: center;
   text-align: center;
-}
-
-.title {
-  font-family: "Quicksand", "Source Sans Pro", -apple-system, BlinkMacSystemFont,
-    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; /* 1 */
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
 }
 </style>
