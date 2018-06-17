@@ -1,13 +1,15 @@
 {
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt",
-    "start": "nuxt start",
+    "dev": "yarn start",
+    "start": "node src/server.js",
     "generate": "nuxt generate"
   },
   "dependencies": {
     "@babel/core": "^7.0.0-beta.51",
-    "nuxt": "^1.4.0"
+    "express-session": "^1.15.6",
+    "nuxt": "^1.4.0",
+    "oauth": "^0.9.15"
   },
   "devDependencies": {}
 }
