@@ -2,14 +2,16 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "yarn start",
-    "start": "node src/server.js",
+    "start": "node src/api/index.js",
     "generate": "nuxt generate"
   },
   "dependencies": {
     "@babel/core": "^7.0.0-beta.51",
+    "chokidar": "^2.0.3",
     "express-session": "^1.15.6",
     "nuxt": "^1.4.0",
-    "oauth": "^0.9.15"
+    "oauth": "^0.9.15",
+    "twitter": "^1.7.1"
   },
   "devDependencies": {}
 }

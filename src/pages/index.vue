@@ -5,6 +5,8 @@
       <h1 class="title">
         Welcome to your Nuxt.js experience! {{tokens}}
       </h1>
+      <a href="/api/auth/twitter">Twitter認証</a>
+      <a href="/api/follow/followers">フォロワー確認</a>
       <h2 class="subtitle">
         This is an example page
       </h2>

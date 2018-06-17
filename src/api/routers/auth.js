@@ -1,23 +1,7 @@
-const { Nuxt, Builder } = require("nuxt");
-const bodyParser = require("body-parser");
-const session = require("express-session");
-const app = require("express")();
 const Oauth = require("oauth").OAuth;
 const { TW_CONSUMER_KEY, TW_CONSUMER_SECRET } = process.env;
-const nuxtConfig = require("../nuxt.config");
-
-// Body parser, to access `req.body`
-app.use(bodyParser.json());
-
-// Sessions to create `req.session`
-app.use(
-  session({
-    secret: "3u83jlfeahr3q43yp8qrewaji3",
-    resave: false,
-    saveUninitialized: false,
-    cookie: { maxAge: 60000 }
-  })
-);
+const { Router } = require("express");
+const router = Router();
 
 const oa = new Oauth(
   "https://api.twitter.com/oauth/request_token",
@@ -29,7 +13,7 @@ const oa = new Oauth(
   "HMAC-SHA1"
 );
 // twitter login
-app.get("/api/twitter", function(req, res) {
+router.get("/twitter", (req, res) => {
   oa.getOAuthRequestToken(function(
     error,
     oauthToken,
@@ -51,7 +35,7 @@ app.get("/api/twitter", function(req, res) {
   });
 });
 
-app.get("/api/twitter/callback", function(req, res, next) {
+router.get("/twitter/callback", (req, res, next) => {
   if (!req.session.oauth) {
     next(new Error("You're forbidden to access"));
   }
@@ -78,14 +62,4 @@ app.get("/api/twitter/callback", function(req, res, next) {
   );
 });
 
-// We instantiate Nuxt.js with the options
-const isProd = process.env.NODE_ENV === "production";
-const nuxt = new Nuxt(nuxtConfig);
-// No build in production
-if (!isProd) {
-  const builder = new Builder(nuxt);
-  builder.build();
-}
-app.use(nuxt.render);
-app.listen(3000);
-console.log("Server is listening on http://localhost:3000");
+module.exports = router;
