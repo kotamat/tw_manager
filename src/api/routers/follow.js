@@ -24,12 +24,39 @@ router.get("/followers", async (req, res) => {
     const client = genTwClient(req);
     const users = await client.get("followers/list", {
       screen_name: req.query.screen_name,
-      cursor: req.query.cursor
+      cursor: req.query.cursor,
+      count: 200
     });
     res.send(users);
   } catch (err) {
     console.error(err);
-    res.send("error");
+    res.status(400).send(err);
+  }
+});
+router.get("/follows", async (req, res) => {
+  try {
+    const client = genTwClient(req);
+    const users = await client.get("friends/list", {
+      screen_name: req.query.screen_name,
+      cursor: req.query.cursor,
+      count: 200
+    });
+    res.send(users);
+  } catch (err) {
+    console.error(err);
+    res.status(400).send(err);
+  }
+});
+router.post("/unfollow", async (req, res) => {
+  try {
+    const client = genTwClient(req);
+    const result = await client.post("friendships/destroy", {
+      screen_name: req.body.screen_name
+    });
+    res.send(result);
+  } catch (err) {
+    console.error(err);
+    res.status(400).send(err);
   }
 });
 
