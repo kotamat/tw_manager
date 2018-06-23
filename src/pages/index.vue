@@ -51,7 +51,7 @@ export default {
       let i = 0;
       while (i < 100) {
         await this.loadFollower();
-        if (!this.followCursor) {
+        if (!this.followerCursor) {
           break;
         }
         i++;
